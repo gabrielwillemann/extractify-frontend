@@ -1,6 +1,6 @@
 # extractify-frontend
 
-Ready app, just need to publish
+Ready app, just need to publish. I will publish, tomorrow.
 
 ## Project setup
 ```
