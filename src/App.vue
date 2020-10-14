@@ -31,15 +31,19 @@
       <table class="table table-bordered mb-0">
         <thead>
           <tr>
+            <th style="width: 5%;">Action</th>
             <th style="width: 20%;">Date</th>
             <th>Content file</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(file, i) in files" :key="i">
+          <tr v-for="(file, i) in files" :key="file.datetime">
+            <td>
+              <a href="#" @click.prevent="deleteFile(i)">Delete</a>
+            </td>
             <td>{{ new Date(file.datetime).toLocaleString() }}</td>
             <td class="p-1">
-              <textarea class="form-control" v-model="file.data"> </textarea>
+              <textarea class="form-control" v-model="file.data" rows="5"> </textarea>
             </td>
           </tr>
         </tbody>
@@ -59,14 +63,22 @@ export default {
     files: [],
     loading: false,
   }),
+  computed: {
+    backendUrl() {
+      if (process.env.NODE_ENV == 'development') {
+        return 'http://localhost:3000';
+      }
+      return 'https://extractify-backend-1.herokuapp.com';
+    },
+  },
   methods: {
     async upload() {
       this.loading = true;
       for (let i = 0; i < this.$refs.files.files.length; i++) {
         let dataForm = new FormData();
         let file = this.$refs.files.files[i];
-        dataForm.append(`my-pdf`, file);
-        let res = await fetch('http://localhost:3000/pdf/upload', {
+        dataForm.append(`file-pdf`, file);
+        let res = await fetch(`${this.backendUrl}/pdf`, {
           method: 'POST',
           body: dataForm,
         });
@@ -85,9 +97,14 @@ export default {
     },
     async loadFiles() {
       this.loading = true;
-      let res = await fetch('http://localhost:3000/pdf');
+      let res = await fetch(`${this.backendUrl}/pdf`);
       this.files = await res.json();
       this.loading = false;
+    },
+    async deleteFile(index) {
+      let file = this.files[index];
+      await fetch(`${this.backendUrl}/pdf/${file.datetime}`, { method: 'DELETE' });
+      this.files.splice(index, 1);
     },
   },
   mounted() {
