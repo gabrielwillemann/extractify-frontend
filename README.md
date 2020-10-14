@@ -24,6 +24,6 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
+### URL
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+App hosted in: https://upbeat-northcutt-a23a0f.netlify.app/
